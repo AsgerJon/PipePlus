@@ -11,6 +11,8 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.predicate.entity.EntityPredicates;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.shape.VoxelShape;
+import net.pitan76.mcpitanlib.api.util.EntityUtil;
+import net.pitan76.mcpitanlib.api.util.NbtUtil;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -56,16 +58,16 @@ public class PipeSpBehaviourObsidian extends PipeSpBehaviour {
             return;
         if (isNotConnected())
             return;
-        NbtCompound nbt = new NbtCompound();
+        NbtCompound nbt = NbtUtil.create();
         NbtList tagList = new NbtList();
         long tickNow = pipe.getWorldTime();
         for (ItemEntity itemEntity : itemsList) {
             TravellingItem item = new TravellingItem(itemEntity.getStack());
-            tagList.add(item.writeToNbt(tickNow));
-            itemEntity.remove(Entity.RemovalReason.KILLED);
+            tagList.add(item.writeToNbt(pipe.getPipeWorld().getRegistryManager(), tickNow));
+            EntityUtil.discard(itemEntity);
         }
-        nbt.put("items", tagList);
-        pipe.getFlow().fromTag(nbt);
+        NbtUtil.put(nbt, "items", tagList);
+        pipe.getFlow().fromTag(nbt, pipe.getPipeWorld().getRegistryManager());
     }
 
     public boolean isNotConnected() {

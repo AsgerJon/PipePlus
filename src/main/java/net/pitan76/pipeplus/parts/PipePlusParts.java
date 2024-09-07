@@ -35,61 +35,61 @@ public class PipePlusParts {
     public static final PipeDefItem EMERALD_PIPE;
 
     static {
-        COPPER_ITEM_PIPE = new PipeDefItem(PipePlus.id("copper_item_pipe"), true, true, 1) {
+        COPPER_ITEM_PIPE = new PipeDefItem(PipePlus._id("copper_item_pipe").toMinecraft(), true, true, 1) {
             @Override
             public PipeSpBehaviour createBehaviour(PartSpPipe pipe) {
                 return new PipeSpBehaviourItemExtract(pipe, 20, 1);
             }
         };
-        TIN_ITEM_PIPE = new PipeDefItem(PipePlus.id("tin_item_pipe"), true, true, 3) {
+        TIN_ITEM_PIPE = new PipeDefItem(PipePlus._id("tin_item_pipe").toMinecraft(), true, true, 3) {
             @Override
             public PipeSpBehaviour createBehaviour(PartSpPipe pipe) {
                 return new PipeSpBehaviourItemExtract(pipe, 10, 1);
             }
         };
-        SILVER_ITEM_PIPE = new PipeDefItem(PipePlus.id("silver_item_pipe"), true, true, 6) {
+        SILVER_ITEM_PIPE = new PipeDefItem(PipePlus._id("silver_item_pipe").toMinecraft(), true, true, 6) {
             @Override
             public PipeSpBehaviour createBehaviour(PartSpPipe pipe) {
                 return new PipeSpBehaviourItemExtract(pipe, 5, 1);
             }
         };
-        STACK_EXTRACT_ITEM_PIPE = new PipeDefItem(PipePlus.id("stack_extract_pipe"), true, true, 6) {
+        STACK_EXTRACT_ITEM_PIPE = new PipeDefItem(PipePlus._id("stack_extract_pipe").toMinecraft(), true, true, 6) {
             @Override
             public PipeSpBehaviour createBehaviour(PartSpPipe pipe) {
                 return new PipeSpBehaviourItemExtract(pipe, 5, 64);
             }
         };
-        REDSTONE_ITEM_PIPE = new PipeDefItem(PipePlus.id("redstone_item_pipe"), false, false, 1) {
+        REDSTONE_ITEM_PIPE = new PipeDefItem(PipePlus._id("redstone_item_pipe").toMinecraft(), false, false, 1) {
             @Override
             public PipeSpBehaviour createBehaviour(PartSpPipe pipe) {
                 return new PipeSpBehaviourRedstone(pipe);
             }
         };
-        COBBLESTONE_ITEM_PIPE = new PipeDefItem(PipePlus.id("cobblestone_item_pipe"), false, false, 1) {
+        COBBLESTONE_ITEM_PIPE = new PipeDefItem(PipePlus._id("cobblestone_item_pipe").toMinecraft(), false, false, 1) {
             @Override
             public PipeSpBehaviour createBehaviour(PartSpPipe pipe) {
                 return new PipeSpBehaviourCobblestone(pipe);
             }
         };
-        VOID_ITEM_PIPE = new PipeDefItem(PipePlus.id("void_item_pipe"), false, false, 1) {
+        VOID_ITEM_PIPE = new PipeDefItem(PipePlus._id("void_item_pipe").toMinecraft(), false, false, 1) {
             @Override
             public PipeSpFlowItem createFlow(PartSpPipe pipe) {
                 return new VoidPipeFlowItem(pipe);
             }
         };
-        OBSIDIAN_ITEM_PIPE = new PipeDefItem(PipePlus.id("obsidian_item_pipe"), true, false, 1) {
+        OBSIDIAN_ITEM_PIPE = new PipeDefItem(PipePlus._id("obsidian_item_pipe").toMinecraft(), true, false, 1) {
             @Override
             public PipeSpBehaviour createBehaviour(PartSpPipe pipe) {
                 return new PipeSpBehaviourObsidian(pipe);
             }
         };
-        ENDER_PIPE = new PipeDefItem(PipePlus.id("ender_pipe"), true, true, 1) {
+        ENDER_PIPE = new PipeDefItem(PipePlus._id("ender_pipe").toMinecraft(), true, true, 1) {
             @Override
             public PipeSpBehaviour createBehaviour(PartSpPipe pipe) {
                 return new PipeSpBehaviourEnder(pipe);
             }
         };
-        TELEPORT_ITEM_PIPE = new PipeDefItem(PipePlus.id("pipe_items_teleport"), true, true, 1) {
+        TELEPORT_ITEM_PIPE = new PipeDefItem(PipePlus._id("pipe_items_teleport").toMinecraft(), true, true, 1) {
             @Override
             public PipeSpBehaviour createBehaviour(PartSpPipe pipe) {
                 return new PipeSpBehaviourTeleport(pipe);
@@ -100,22 +100,22 @@ public class PipePlusParts {
                 return new TeleportPipeFlow(pipe);
             }
         };
-        RUBY_PIPE = new PipeDefItem(PipePlus.id("ruby_pipe"), false, false, 12);
-        EMERALD_PIPE = new PipeDefItem(PipePlus.id("emerald_pipe"), false, false, 9);
+        RUBY_PIPE = new PipeDefItem(PipePlus._id("ruby_pipe").toMinecraft(), false, false, 12);
+        EMERALD_PIPE = new PipeDefItem(PipePlus._id("emerald_pipe").toMinecraft(), false, false, 9);
 
-        COPPER_FLUID_PIPE = new PipeDefFluid(PipePlus.id("copper_fluid_pipe"), true) {
+        COPPER_FLUID_PIPE = new PipeDefFluid(PipePlus._id("copper_fluid_pipe").toMinecraft(), true) {
             @Override
             public PipeSpBehaviour createBehaviour(PartSpPipe pipe) {
                 return new PipeSpBehaviourFluidExtract(pipe, 20);
             }
         };
-        TIN_FLUID_PIPE = new PipeDefFluid(PipePlus.id("tin_fluid_pipe"), true) {
+        TIN_FLUID_PIPE = new PipeDefFluid(PipePlus._id("tin_fluid_pipe").toMinecraft(), true) {
             @Override
             public PipeSpBehaviour createBehaviour(PartSpPipe pipe) {
                 return new PipeSpBehaviourFluidExtract(pipe, 10);
             }
         };
-        SILVER_FLUID_PIPE = new PipeDefFluid(PipePlus.id("silver_fluid_pipe"), true) {
+        SILVER_FLUID_PIPE = new PipeDefFluid(PipePlus._id("silver_fluid_pipe").toMinecraft(), true) {
             @Override
             public PipeSpBehaviour createBehaviour(PartSpPipe pipe) {
                 return new PipeSpBehaviourFluidExtract(pipe, 5);

@@ -1,13 +1,15 @@
 package net.pitan76.pipeplus.guis;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.ingame.HandledScreen;
 import net.minecraft.client.gui.widget.ButtonWidget;
 import net.minecraft.client.gui.widget.TextFieldWidget;
 import net.minecraft.entity.player.PlayerInventory;
+import net.minecraft.screen.ScreenHandler;
 import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
+import net.pitan76.mcpitanlib.api.client.CompatInventoryScreen;
+import net.pitan76.mcpitanlib.api.client.render.handledscreen.DrawBackgroundArgs;
+import net.pitan76.mcpitanlib.api.client.render.handledscreen.DrawForegroundArgs;
+import net.pitan76.mcpitanlib.api.util.CompatIdentifier;
 import net.pitan76.mcpitanlib.api.util.TextUtil;
 import net.pitan76.mcpitanlib.api.util.client.ScreenUtil;
 import net.pitan76.pipeplus.PipePlus;
@@ -16,8 +18,8 @@ import net.pitan76.pipeplus.items.PipePlusItems;
 import net.pitan76.pipeplus.pipe.PipeSpBehaviourTeleport;
 import org.apache.logging.log4j.Level;
 
-public class TeleportPipeSettingScreen extends HandledScreen<TeleportPipeSettingHandler> {
-    private static final Identifier GUI = PipePlus.id("textures/gui/background_generic.png");
+public class TeleportPipeSettingScreen extends CompatInventoryScreen {
+    private static final CompatIdentifier GUI = PipePlus._id("textures/gui/background_generic.png");
 
     public PipeSpBehaviourTeleport behaviour;
 
@@ -97,23 +99,20 @@ public class TeleportPipeSettingScreen extends HandledScreen<TeleportPipeSetting
         ServerNetwork.send("teleport_pipe.frequency", value);
     }
 
-    public TeleportPipeSettingScreen(TeleportPipeSettingHandler container, PlayerInventory inv, Text title) {
+    public TeleportPipeSettingScreen(ScreenHandler container, PlayerInventory inv, Text title) {
         super(container, inv, PipePlusItems.PIPE_ITEMS_TELEPORT.getName());
-        behaviour = container.behaviour;
+        if (container instanceof TeleportPipeSettingHandler) {
+            this.behaviour = ((TeleportPipeSettingHandler) container).behaviour;
+        }
     }
 
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        this.renderBackground(context);
-        super.render(context, mouseX, mouseY, delta);
-        this.drawMouseoverTooltip(context, mouseX, mouseY);
+    @Override
+    public CompatIdentifier getCompatTexture() {
+        return GUI;
     }
 
-    protected void drawBackground(DrawContext context, float partialTicks, int mouseX, int mouseY) {
-        ScreenUtil.setBackground(GUI);
-
-        int x = (this.width - this.backgroundWidth) / 2;
-        int y = (this.height - this.backgroundHeight) / 2;
-        context.drawTexture(GUI, x, y, 0, 0, this.backgroundWidth, this.backgroundHeight);
+    public void drawBackgroundOverride(DrawBackgroundArgs args) {
+        ScreenUtil.RendererUtil.drawTexture(args.getDrawObjectDM(), GUI.toMinecraft(), x, y, 0, 0, this.backgroundWidth, this.backgroundHeight);
         pipeMode.setX(12 + x);
         pipeMode.setY(35 + y);
         openMode.setX(114 + x);
@@ -154,21 +153,20 @@ public class TeleportPipeSettingScreen extends HandledScreen<TeleportPipeSetting
         this.addSelectableChild(frequencySetting);
     }
 
-    protected void drawForeground(DrawContext context, int mouseX, int mouseY) {
+    @Override
+    public void drawForegroundOverride(DrawForegroundArgs args) {
         int posX = behaviour.getPos().getX();
         int posY = behaviour.getPos().getY();
         int posZ = behaviour.getPos().getZ();
 
-        x = (this.width - this.backgroundWidth) / 2;
-        y = (this.height - this.backgroundHeight) / 2;
-        context.drawText(this.textRenderer, this.title, 71, 7, 0x0a0c84, false);
-        context.drawText(this.textRenderer, TextUtil.translatable("label.pipeplus.teleport_pipe_setting.owner", behaviour.ownerName), 12, 22, 4210752, false);
-        context.drawText(this.textRenderer, TextUtil.translatable("label.pipeplus.teleport_pipe_setting.coords", posX, posY, posZ), 110, 22, 4210752, false);
+        ScreenUtil.RendererUtil.drawText(this.textRenderer, args.getDrawObjectDM(), this.title, 71, 7, 0x0a0c84);
+        ScreenUtil.RendererUtil.drawText(this.textRenderer, args.getDrawObjectDM(), TextUtil.translatable("label.pipeplus.teleport_pipe_setting.owner", behaviour.ownerName), 12, 22, 4210752);
+        ScreenUtil.RendererUtil.drawText(this.textRenderer, args.getDrawObjectDM(), TextUtil.translatable("label.pipeplus.teleport_pipe_setting.coords", posX, posY, posZ), 110, 22, 4210752);
     }
 
     @Override
-    protected void init() {
-        super.init();
+    public void initOverride() {
+        super.initOverride();
 
         this.backgroundWidth = 227;
         this.backgroundHeight = 116;
@@ -179,14 +177,14 @@ public class TeleportPipeSettingScreen extends HandledScreen<TeleportPipeSetting
     }
 
     @Override
-    public void close() {
+    public void closeOverride() {
         try {
             int newFrequency = Math.max(Integer.parseInt(frequencySetting.getText()), 0);
             setFrequency(newFrequency);
         } catch (NumberFormatException e) {
-            PipePlus.log(Level.ERROR, "Failed to parse frequency: " + frequencySetting.getText());
+            PipePlus.instance.error("Failed to parse frequency: " + frequencySetting.getText());
         }
 
-        super.close();
+        super.closeOverride();
     }
 }

@@ -2,17 +2,15 @@ package net.pitan76.pipeplus.items;
 
 import alexiil.mc.mod.pipes.items.ItemPipePart;
 import alexiil.mc.mod.pipes.pipe.PipeSpDef;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.ItemStack;
 import net.minecraft.text.Text;
-import net.minecraft.world.World;
+import net.pitan76.mcpitanlib.api.event.item.ItemAppendTooltipEvent;
 import net.pitan76.mcpitanlib.api.item.CompatibleItemSettings;
-import org.jetbrains.annotations.Nullable;
+import net.pitan76.mcpitanlib.api.item.ExtendItemProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ExtendItemPipePart extends ItemPipePart {
+public class ExtendItemPipePart extends ItemPipePart implements ExtendItemProvider {
     public List<Text> tooltip = new ArrayList<>();
 
     public ExtendItemPipePart(CompatibleItemSettings settings, PipeSpDef part) {
@@ -30,9 +28,8 @@ public class ExtendItemPipePart extends ItemPipePart {
     }
 
     @Override
-    public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        super.appendTooltip(stack, world, tooltip, context);
+    public void appendTooltip(ItemAppendTooltipEvent e, Options options) {
         if (!this.tooltip.isEmpty())
-            tooltip.addAll(this.tooltip);
+            e.addTooltip(this.tooltip);
     }
 }

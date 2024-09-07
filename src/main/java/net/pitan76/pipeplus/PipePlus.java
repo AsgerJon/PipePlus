@@ -2,38 +2,34 @@ package net.pitan76.pipeplus;
 
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
-import net.fabricmc.api.ModInitializer;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.Identifier;
 import net.pitan76.mcpitanlib.api.event.v0.EventRegistry;
 import net.pitan76.mcpitanlib.api.item.CreativeTabBuilder;
-import net.pitan76.mcpitanlib.api.registry.CompatRegistry;
+import net.pitan76.mcpitanlib.api.registry.v2.CompatRegistryV2;
+import net.pitan76.mcpitanlib.api.util.CompatIdentifier;
+import net.pitan76.mcpitanlib.fabric.ExtendModInitializer;
 import net.pitan76.pipeplus.config.PipePlusConfig;
 import net.pitan76.pipeplus.guis.PipePlusContainers;
 import net.pitan76.pipeplus.items.PipePlusItems;
 import net.pitan76.pipeplus.parts.PipePlusParts;
-import org.apache.logging.log4j.Level;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
-public class PipePlus implements ModInitializer {
+public class PipePlus extends ExtendModInitializer {
 
     public static final String MOD_ID = "pipeplus";
     public static final String MOD_NAME = "PipePlus";
     public static PipePlus instance;
-    private static final Logger LOGGER = LogManager.getLogger();
 
     public static final CreativeTabBuilder PIPEPLUS_GROUP = CreativeTabBuilder.create(
-            id("all")).
+            _id("all")).
             setIcon(() -> new ItemStack(PipePlusItems.COPPER_PIPE));
 
-    public static CompatRegistry registry = CompatRegistry.createRegistry(MOD_ID);
+    public static CompatRegistryV2 registry;
 
-    public void onInitialize() {
-        log(Level.INFO, "Initializing");
+    public void init() {
         instance = this;
+        registry = super.registry;
 
-        registry.registerItemGroup(id("all"), PIPEPLUS_GROUP);
+        registry.registerItemGroup(compatId("all"), PIPEPLUS_GROUP);
         AutoConfig.register(PipePlusConfig.class, GsonConfigSerializer::new);
         PipePlusParts.init();
         PipePlusItems.init();
@@ -45,11 +41,17 @@ public class PipePlus implements ModInitializer {
         EventRegistry.ServerLifecycle.serverStopped((server -> TeleportManager.instance.reset()));
     }
 
-    public static void log(Level level, String message){
-        LOGGER.log(level, "[" + MOD_NAME + "] " + message);
+    public static CompatIdentifier _id(String id) {
+        return CompatIdentifier.of(MOD_ID, id);
     }
 
-    public static Identifier id(String id) {
-        return new Identifier(MOD_ID, id);
+    @Override
+    public String getName() {
+        return MOD_NAME;
+    }
+
+    @Override
+    public String getId() {
+        return MOD_ID;
     }
 }

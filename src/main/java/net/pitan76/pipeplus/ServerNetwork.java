@@ -2,32 +2,35 @@ package net.pitan76.pipeplus;
 
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
-import net.minecraft.util.Identifier;
-import net.pitan76.mcpitanlib.api.network.ClientNetworking;
+import net.pitan76.mcpitanlib.api.entity.Player;
+import net.pitan76.mcpitanlib.api.network.v2.ClientNetworking;
 import net.pitan76.mcpitanlib.api.network.PacketByteUtil;
-import net.pitan76.mcpitanlib.api.network.ServerNetworking;
+import net.pitan76.mcpitanlib.api.network.v2.ServerNetworking;
+import net.pitan76.mcpitanlib.api.util.CompatIdentifier;
+import net.pitan76.mcpitanlib.api.util.NbtUtil;
 import net.pitan76.pipeplus.guis.TeleportPipeSettingHandler;
 
 import java.util.UUID;
 
 public class ServerNetwork {
 
-    public static Identifier id = PipePlus.id("network");
+    public static CompatIdentifier id = PipePlus._id("network");
 
     public static void init() {
-        ServerNetworking.registerReceiver(id, ((server, player, buf) -> {
-            NbtCompound nbt = PacketByteUtil.readNbt(buf);
+        ServerNetworking.registerReceiver(id, (e -> {
+            NbtCompound nbt = PacketByteUtil.readNbt(e.buf);
 
-            if (!(player.currentScreenHandler instanceof TeleportPipeSettingHandler)) return;
-            TeleportPipeSettingHandler gui = (TeleportPipeSettingHandler) player.currentScreenHandler;
+            Player player = e.player;
+            if (!(player.getCurrentScreenHandler() instanceof TeleportPipeSettingHandler)) return;
+            TeleportPipeSettingHandler gui = (TeleportPipeSettingHandler) player.getCurrentScreenHandler();
 
-            if (nbt.contains("teleport_pipe.frequency"))
+            if (NbtUtil.has(nbt, "teleport_pipe.frequency"))
                 gui.behaviour.frequency = nbt.getInt("teleport_pipe.frequency");
 
-            if (nbt.contains("teleport_pipe.mode"))
+            if (NbtUtil.has(nbt, "teleport_pipe.mode"))
                 gui.behaviour.pipeModeInt = nbt.getInt("teleport_pipe.mode");
 
-            if (nbt.contains("teleport_pipe.is_public"))
+            if (NbtUtil.has(nbt, "teleport_pipe.is_public"))
                 gui.behaviour.modeIsPublic = nbt.getBoolean("teleport_pipe.is_public");
 
         }));
@@ -42,69 +45,69 @@ public class ServerNetwork {
 
     public static void send(String key, String string) {
         NbtCompound tag = newTag();
-        tag.putString("type", "string");
-        tag.putString(key, string);
+        NbtUtil.putString(tag, "type", "string");
+        NbtUtil.putString(tag, key, string);
         send(tag);
     }
 
     public static void send(String key, Integer integer) {
         NbtCompound tag = newTag();
-        tag.putString("type", "integer");
-        tag.putInt(key, integer);
+        NbtUtil.putString(tag, "type", "integer");
+        NbtUtil.putInt(tag, key, integer);
         send(tag);
     }
 
     public static void send(String key, Boolean bool) {
         NbtCompound tag = newTag();
-        tag.putString("type", "bool");
-        tag.putBoolean(key, bool);
+        NbtUtil.putString(tag, "type", "bool");
+        NbtUtil.putBoolean(tag, key, bool);
         send(tag);
     }
 
     public static void send(String key, UUID uuid) {
         NbtCompound tag = newTag();
-        tag.putString("type", "uuid");
-        tag.putUuid(key, uuid);
+        NbtUtil.putString(tag, "type", "uuid");
+        NbtUtil.putUuid(tag, key, uuid);
         send(tag);
     }
 
     public static void send(String key, Byte b) {
         NbtCompound tag = newTag();
-        tag.putString("type", "byte");
-        tag.putByte(key, b);
+        NbtUtil.putString(tag, "type", "byte");
+        NbtUtil.putByte(tag, key, b);
         send(tag);
     }
 
     public static void send(String key, Double d) {
         NbtCompound tag = newTag();
-        tag.putString("type", "double");
-        tag.putDouble(key, d);
+        NbtUtil.putString(tag, "type", "double");
+        NbtUtil.putDouble(tag, key, d);
         send(tag);
     }
 
     public static void send(String key, Float f) {
         NbtCompound tag = newTag();
-        tag.putString("type", "float");
-        tag.putFloat(key, f);
+        NbtUtil.putString(tag, "type", "float");
+        NbtUtil.putFloat(tag, key, f);
         send(tag);
     }
 
     public static void send(String key, Short s) {
         NbtCompound tag = newTag();
-        tag.putString("type", "short");
-        tag.putShort(key, s);
+        NbtUtil.putString(tag, "type", "short");
+        NbtUtil.putShort(tag, key, s);
         send(tag);
     }
 
     public static void send(String key, Long l) {
         NbtCompound tag = newTag();
-        tag.putString("type", "long");
-        tag.putLong(key, l);
+        NbtUtil.putString(tag, "type", "long");
+        NbtUtil.putLong(tag, key, l);
         send(tag);
     }
 
     public static NbtCompound newTag() {
-        return new NbtCompound();
+        return NbtUtil.create();
     }
 
 

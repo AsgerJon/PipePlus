@@ -7,8 +7,10 @@ import alexiil.mc.mod.pipes.pipe.PartSpPipe;
 import alexiil.mc.mod.pipes.pipe.PipeSpBehaviour;
 import alexiil.mc.mod.pipes.pipe.PipeSpFlowItem;
 import net.minecraft.nbt.NbtCompound;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
+import net.pitan76.mcpitanlib.api.util.NbtUtil;
 import net.pitan76.pipeplus.client.model.part.PipeSpPartKeyMutable;
 
 public class PipeSpBehaviourRedstone extends PipeSpBehaviour {
@@ -43,15 +45,15 @@ public class PipeSpBehaviourRedstone extends PipeSpBehaviour {
     }
 
     @Override
-    public void fromNbt(NbtCompound nbt) {
-        super.fromNbt(nbt);
-        isEmpty = nbt.getBoolean("isEmpty");
+    public void fromNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup lookup) {
+        super.fromNbt(nbt, lookup);
+        isEmpty = NbtUtil.getBoolean(nbt, "isEmpty");
     }
 
     @Override
-    public NbtCompound toNbt() {
-        NbtCompound nbt = super.toNbt();
-        nbt.putBoolean("isEmpty", isEmpty);
+    public NbtCompound toNbt(RegistryWrapper.WrapperLookup lookup) {
+        NbtCompound nbt = super.toNbt(lookup);
+        NbtUtil.putBoolean(nbt, "isEmpty", isEmpty);
         return nbt;
     }
 

@@ -2,8 +2,8 @@ package net.pitan76.pipeplus.items;
 
 import alexiil.mc.mod.pipes.items.ItemPipePart;
 import net.minecraft.item.Item;
-import net.minecraft.util.Identifier;
 import net.pitan76.mcpitanlib.api.item.CompatibleItemSettings;
+import net.pitan76.mcpitanlib.api.util.CompatIdentifier;
 import net.pitan76.mcpitanlib.api.util.TextUtil;
 import net.pitan76.pipeplus.PipePlus;
 import net.pitan76.pipeplus.parts.PipePlusParts;
@@ -70,9 +70,9 @@ public class PipePlusItems {
     }
 
     public static void register(Item item, String id) {
-        registry.registerItem(PipePlus.id(id), () -> item);
+        registry.registerItem(PipePlus._id(id), () -> item);
     }
-    public static void register(Item item, Identifier id) {
+    public static void register(Item item, CompatIdentifier id) {
         registry.registerItem(id, () -> item);
     }
 }

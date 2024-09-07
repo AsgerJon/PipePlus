@@ -3,21 +3,21 @@ package net.pitan76.pipeplus.pipe;
 import alexiil.mc.mod.pipes.container.SimplePipeContainerFactory;
 import alexiil.mc.mod.pipes.pipe.PartSpPipe;
 import alexiil.mc.mod.pipes.pipe.PipeSpBehaviour;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.fabric.api.screenhandler.v1.ExtendedScreenHandlerFactory;
-import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.network.PacketByteBuf;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.screen.ScreenHandler;
-import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.pitan76.mcpitanlib.api.entity.Player;
+import net.pitan76.mcpitanlib.api.event.container.factory.DisplayNameArgs;
+import net.pitan76.mcpitanlib.api.event.container.factory.ExtraDataArgs;
+import net.pitan76.mcpitanlib.api.gui.ExtendedScreenHandlerFactory;
+import net.pitan76.mcpitanlib.api.util.NbtUtil;
 import net.pitan76.mcpitanlib.api.util.TextUtil;
 import net.pitan76.pipeplus.TeleportManager;
 import net.pitan76.pipeplus.TeleportPipeType;
@@ -38,19 +38,24 @@ public class PipeSpBehaviourTeleport extends PipeSpBehaviour implements IPipeTel
     public Integer frequency = 0;
 
     @Override
-    public ActionResult onUse(PlayerEntity player, Hand hand, BlockHitResult hit) {
-        if (owner.equals(UUID.fromString("00000000-0000-0000-0000-000000000000")))
-            setOwnerNameAndUUID(player.getUuid());
+    public ActionResult onUse(PlayerEntity p, BlockHitResult hit) {
+        Player player = new Player(p);
 
-        if (!canPlayerModifyPipe(player.getUuid()))
+        if (owner.equals(UUID.fromString("00000000-0000-0000-0000-000000000000")))
+            setOwnerNameAndUUID(player.getUUID());
+
+        if (!canPlayerModifyPipe(player.getUUID()))
             return ActionResult.FAIL;
 
-        if (!player.getWorld().isClient) {
+        if (!player.isClient()) {
+            player.openExtendedMenu(this);
+            /*
             player.openHandledScreen(new SimplePipeContainerFactory(
                     PipePlusItems.PIPE_ITEMS_TELEPORT.getName(),
                     (syncId, inv, player1) -> new TeleportPipeSettingHandler(syncId, inv, this),
-                    (player1, buf) -> buf.writeBlockPos(pipe.getPipePos())
+                    (player1) -> buf.writeBlockPos(pipe.getPipePos())
             ));
+             */
         }
 
         return ActionResult.SUCCESS;
@@ -62,54 +67,55 @@ public class PipeSpBehaviourTeleport extends PipeSpBehaviour implements IPipeTel
     }
 
     @Override
-    public NbtCompound toNbt() {
-        NbtCompound nbt = super.toNbt();
+    public NbtCompound toNbt(RegistryWrapper.WrapperLookup lookup) {
+        NbtCompound nbt = super.toNbt(lookup);
         putNbt(nbt);
         return nbt;
+
     }
 
     @Override
-    public void fromNbt(NbtCompound nbt) {
-        super.fromNbt(nbt);
+    public void fromNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup lookup) {
+        super.fromNbt(nbt, lookup);
         loadNbt(nbt);
         TeleportManager.instance.addPipe(this);
     }
 
     public void putNbt(NbtCompound nbt) {
-        nbt.putUuid("pipe_uuid", pipeUUID);
-        nbt.putUuid("owner", owner);
-        nbt.putString("owner_name", ownerName);
-        nbt.putBoolean("is_public", modeIsPublic);
-        nbt.putInt("pipe_mode", pipeModeInt);
-        nbt.putInt("frequency", frequency);
+        NbtUtil.putUuid(nbt, "pipe_uuid", pipeUUID);
+        NbtUtil.putUuid(nbt, "owner", owner);
+        NbtUtil.putString(nbt, "owner_name", ownerName);
+        NbtUtil.putBoolean(nbt, "is_public", modeIsPublic);
+        NbtUtil.putInt(nbt, "pipe_mode", pipeModeInt);
+        NbtUtil.putInt(nbt, "frequency", frequency);
     }
 
     public void loadNbt(NbtCompound nbt) {
-        if (nbt.contains("pipe_uuid")) {
-            pipeUUID = nbt.getUuid("pipe_uuid");
+        if (NbtUtil.has(nbt, "pipe_uuid")) {
+            pipeUUID = NbtUtil.getUuid(nbt, "pipe_uuid");
         }
 
-        if (nbt.contains("owner")) {
-            owner = nbt.getUuid("owner");
+        if (NbtUtil.has(nbt, "owner")) {
+            owner = NbtUtil.getUuid(nbt, "owner");
         }
 
-        if (nbt.contains("owner_name")) {
-            ownerName = nbt.getString("owner_name");
+        if (NbtUtil.has(nbt, "owner_name")) {
+            ownerName = NbtUtil.getString(nbt, "owner_name");
         }
         else if(getWorld().getPlayerByUuid(owner) != null) {
             ownerName = getWorld().getPlayerByUuid(owner).getName().getString();
         }
 
-        if (nbt.contains("is_public")) {
-            modeIsPublic = nbt.getBoolean("is_public");
+        if (NbtUtil.has(nbt, "is_public")) {
+            modeIsPublic = NbtUtil.getBoolean(nbt, "is_public");
         }
 
-        if (nbt.contains("pipe_mode")) {
-            pipeModeInt = nbt.getInt("pipe_mode");
+        if (NbtUtil.has(nbt, "pipe_mode")) {
+            pipeModeInt = NbtUtil.getInt(nbt, "pipe_mode");
         }
 
-        if (nbt.contains("frequency")) {
-            frequency = nbt.getInt("frequency");
+        if (NbtUtil.has(nbt, "frequency")) {
+            frequency = NbtUtil.getInt(nbt, "frequency");
         }
     }
 
@@ -195,15 +201,15 @@ public class PipeSpBehaviourTeleport extends PipeSpBehaviour implements IPipeTel
     }
 
     @Override
-    public void writeScreenOpeningData(ServerPlayerEntity player, PacketByteBuf buf) {
-        NbtCompound nbt = new NbtCompound();
-        putNbt(nbt);
-        buf.writeBlockPos(getPos());
+    public void writeExtraData(ExtraDataArgs args) {
+        //NbtCompound nbt = NbtUtil.create();
+        //putNbt(nbt);
+        args.writeVar(pipe.getPipePos());
         //buf.writeNbt(nbt);
     }
 
     @Override
-    public Text getDisplayName() {
+    public Text getDisplayName(DisplayNameArgs args) {
         return TextUtil.empty();
     }
 
