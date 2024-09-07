@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.5-SNAPSHOT'
+	id 'fabric-loom' version '1.7-SNAPSHOT'
 	id 'maven-publish'
 	id 'com.matthewprenger.cursegradle' version '1.+'
 	id "com.modrinth.minotaur" version "2.+"
@@ -16,6 +16,7 @@ repositories {
 	maven { url "https://kneelawk.com/maven/" }
 	maven { url "https://maven.terraformersmc.com/releases" }
 	maven { url "https://maven.pitan76.net/" }
+	maven { url "https://cursemaven.com" }
 	mavenLocal()
 }
 
@@ -43,7 +44,7 @@ dependencies {
 	modImplementation "net.pitan76:mcpitanlib-fabric${rootProject.mcpitanlib_version}"
 	include "net.pitan76:mcpitanlib_checker-fabric:${rootProject.mcpitanlib_checker_version}"
 
-	modImplementation "com.terraformersmc:modmenu:7.2.2"
+	modImplementation "com.terraformersmc:modmenu:11.0.2"
 }
 
 processResources {
