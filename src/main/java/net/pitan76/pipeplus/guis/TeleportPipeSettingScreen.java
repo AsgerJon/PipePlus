@@ -16,7 +16,6 @@ import net.pitan76.pipeplus.PipePlus;
 import net.pitan76.pipeplus.ServerNetwork;
 import net.pitan76.pipeplus.items.PipePlusItems;
 import net.pitan76.pipeplus.pipe.PipeSpBehaviourTeleport;
-import org.apache.logging.log4j.Level;
 
 public class TeleportPipeSettingScreen extends CompatInventoryScreen {
     private static final CompatIdentifier GUI = PipePlus._id("textures/gui/background_generic.png");
@@ -31,11 +30,8 @@ public class TeleportPipeSettingScreen extends CompatInventoryScreen {
     }
 
     public void openModeBtnUpdate() {
-        if (behaviour.modeIsPublic) {
-            openMode.setMessage(TextUtil.translatable("button.pipeplus.teleport_pipe_setting.openMode.public"));
-        } else {
-            openMode.setMessage(TextUtil.translatable("button.pipeplus.teleport_pipe_setting.openMode.private"));
-        }
+        openMode.setMessage(TextUtil.translatable(behaviour.modeIsPublic
+                ? "button.pipeplus.teleport_pipe_setting.openMode.public" : "button.pipeplus.teleport_pipe_setting.openMode.private"));
     }
 
     public ButtonWidget pipeMode = ScreenUtil.createButtonWidget(12, 35, 102, 20, TextUtil.translatable("button.pipeplus.teleport_pipe_setting.pipeMode.sendOnly"), (button -> {
@@ -78,9 +74,8 @@ public class TeleportPipeSettingScreen extends CompatInventoryScreen {
     public TextFieldWidget frequencySetting = new TextFieldWidget(MinecraftClient.getInstance().textRenderer, 12, 60, 204, 20, TextUtil.literal("0")) {
         @Override
         public boolean charTyped(char chr, int modifiers) {
-            if(!Character.isDigit(chr)) {
+            if (!Character.isDigit(chr))
                 return false;
-            }
 
             return super.charTyped(chr, modifiers);
         }
@@ -167,9 +162,8 @@ public class TeleportPipeSettingScreen extends CompatInventoryScreen {
     @Override
     public void initOverride() {
         super.initOverride();
-
-        this.backgroundWidth = 227;
-        this.backgroundHeight = 116;
+        setBackgroundWidth(227);
+        setBackgroundHeight(116);
 
         pipeModeBtnUpdate();
         openModeBtnUpdate();
